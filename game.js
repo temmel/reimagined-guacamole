@@ -5,7 +5,10 @@ const gameState = {
     raceDistance: 100,
     hippos: [],
     currentQuestionIndex: 0,
-    usedQuestions: []
+    usedQuestions: [],
+    usedHardQuestions: [],
+    correctStreak: 0,
+    isHardQuestion: false
 };
 
 // Hippo Data
@@ -65,6 +68,70 @@ const hippoData = [
             acceleration: 75,
             bonusMultiplier: 85
         }
+    }
+];
+
+// Hard Trivia Questions
+const hardTriviaQuestions = [
+    {
+        question: "What is the only mammal capable of true flight?",
+        answers: ["Flying Squirrel", "Sugar Glider", "Bat", "Flying Lemur"],
+        correct: 2
+    },
+    {
+        question: "How many species of venomous snakes are there approximately?",
+        answers: ["200", "400", "600", "800"],
+        correct: 2
+    },
+    {
+        question: "What percentage of their body weight can ants lift?",
+        answers: ["10-20 times", "30-40 times", "50-100 times", "100-150 times"],
+        correct: 2
+    },
+    {
+        question: "Which animal has the most powerful bite force?",
+        answers: ["Great White Shark", "Saltwater Crocodile", "Hippopotamus", "Nile Crocodile"],
+        correct: 1
+    },
+    {
+        question: "How many chambers does a cow's stomach have?",
+        answers: ["Two", "Three", "Four", "Five"],
+        correct: 2
+    },
+    {
+        question: "What is the gestation period of an African elephant?",
+        answers: ["12 months", "18 months", "22 months", "28 months"],
+        correct: 2
+    },
+    {
+        question: "Which bird has the largest wingspan?",
+        answers: ["Andean Condor", "Wandering Albatross", "California Condor", "Bald Eagle"],
+        correct: 1
+    },
+    {
+        question: "How fast can a peregrine falcon dive?",
+        answers: ["150 mph", "200 mph", "240 mph", "300 mph"],
+        correct: 2
+    },
+    {
+        question: "What temperature is a polar bear's skin?",
+        answers: ["White", "Pink", "Black", "Gray"],
+        correct: 2
+    },
+    {
+        question: "How many neurons does an octopus have approximately?",
+        answers: ["100 million", "300 million", "500 million", "1 billion"],
+        correct: 2
+    },
+    {
+        question: "What is the only continent without native reptiles?",
+        answers: ["Europe", "Antarctica", "Australia", "North America"],
+        correct: 1
+    },
+    {
+        question: "How long can a Galapagos tortoise live?",
+        answers: ["50 years", "100 years", "150 years", "Over 175 years"],
+        correct: 3
     }
 ];
 
@@ -214,6 +281,9 @@ function startRace() {
     // Initialize race state
     gameState.currentTurn = 1;
     gameState.usedQuestions = [];
+    gameState.usedHardQuestions = [];
+    gameState.correctStreak = 0;
+    gameState.isHardQuestion = false;
     gameState.hippos = hippoData.map(hippo => ({
         ...hippo,
         position: 0,
@@ -256,31 +326,71 @@ function renderRaceTrack() {
 // Update player info
 function updatePlayerInfo() {
     document.querySelector('#turn-counter span').textContent = gameState.currentTurn;
+
+    const streakDisplay = gameState.correctStreak > 0
+        ? ` | Streak: <span style="color: #ff9800; font-weight: bold;">${gameState.correctStreak} 🔥</span>`
+        : '';
+
     document.getElementById('player-info').innerHTML = `
-        Playing as: <strong>${gameState.selectedHippo.name}</strong>
+        Playing as: <strong>${gameState.selectedHippo.name}</strong>${streakDisplay}
     `;
 }
 
 // Show next question
 function showNextQuestion() {
-    // Get unused question
-    const availableQuestions = triviaQuestions.filter((_, index) =>
-        !gameState.usedQuestions.includes(index)
-    );
+    // Check if we should show a hard question (2 correct in a row)
+    const isHardQuestion = gameState.correctStreak >= 2;
+    gameState.isHardQuestion = isHardQuestion;
 
-    if (availableQuestions.length === 0) {
-        gameState.usedQuestions = [];
+    let question;
+
+    if (isHardQuestion) {
+        // Get unused hard question
+        const availableQuestions = hardTriviaQuestions.filter((_, index) =>
+            !gameState.usedHardQuestions.includes(index)
+        );
+
+        if (availableQuestions.length === 0) {
+            gameState.usedHardQuestions = [];
+        }
+
+        const questionIndex = Math.floor(Math.random() * (availableQuestions.length || hardTriviaQuestions.length));
+        const actualIndex = hardTriviaQuestions.indexOf(availableQuestions[questionIndex] || hardTriviaQuestions[questionIndex]);
+        gameState.currentQuestionIndex = actualIndex;
+        gameState.usedHardQuestions.push(actualIndex);
+
+        question = hardTriviaQuestions[actualIndex];
+    } else {
+        // Get unused normal question
+        const availableQuestions = triviaQuestions.filter((_, index) =>
+            !gameState.usedQuestions.includes(index)
+        );
+
+        if (availableQuestions.length === 0) {
+            gameState.usedQuestions = [];
+        }
+
+        const questionIndex = Math.floor(Math.random() * availableQuestions.length);
+        const actualIndex = triviaQuestions.indexOf(availableQuestions[questionIndex]);
+        gameState.currentQuestionIndex = actualIndex;
+        gameState.usedQuestions.push(actualIndex);
+
+        question = triviaQuestions[actualIndex];
     }
 
-    const questionIndex = Math.floor(Math.random() * availableQuestions.length);
-    const actualIndex = triviaQuestions.indexOf(availableQuestions[questionIndex]);
-    gameState.currentQuestionIndex = actualIndex;
-    gameState.usedQuestions.push(actualIndex);
+    // Render question with hard indicator if applicable
+    const questionContainer = document.getElementById('question-container');
+    if (isHardQuestion) {
+        questionContainer.classList.add('hard-question');
+    } else {
+        questionContainer.classList.remove('hard-question');
+    }
 
-    const question = triviaQuestions[actualIndex];
+    const hardBanner = isHardQuestion
+        ? '<div class="hard-question-banner">⚡ HARD QUESTION! ⚡<br><span style="font-size: 0.7em;">Answer correctly for 1.5x BONUS!</span></div>'
+        : '';
 
-    // Render question
-    document.getElementById('question-text').textContent = question.question;
+    document.getElementById('question-text').innerHTML = hardBanner + question.question;
     document.getElementById('feedback').textContent = '';
     document.getElementById('feedback').className = '';
 
@@ -290,6 +400,9 @@ function showNextQuestion() {
     question.answers.forEach((answer, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
+        if (isHardQuestion) {
+            btn.classList.add('hard-mode');
+        }
         btn.textContent = answer;
         btn.addEventListener('click', () => handleAnswer(index));
         answersContainer.appendChild(btn);
@@ -298,7 +411,8 @@ function showNextQuestion() {
 
 // Handle answer
 function handleAnswer(selectedIndex) {
-    const question = triviaQuestions[gameState.currentQuestionIndex];
+    const questionArray = gameState.isHardQuestion ? hardTriviaQuestions : triviaQuestions;
+    const question = questionArray[gameState.currentQuestionIndex];
     const isCorrect = selectedIndex === question.correct;
 
     // Disable all buttons
@@ -314,11 +428,22 @@ function handleAnswer(selectedIndex) {
     // Show feedback
     const feedback = document.getElementById('feedback');
     if (isCorrect) {
-        feedback.textContent = '✓ Correct! Your hippo gets a speed boost!';
-        feedback.className = 'correct';
+        if (gameState.isHardQuestion) {
+            feedback.textContent = '✓ AMAZING! Hard question correct! MEGA BOOST!';
+            feedback.className = 'correct hard';
+        } else {
+            feedback.textContent = '✓ Correct! Your hippo gets a speed boost!';
+            feedback.className = 'correct';
+        }
+        // Increment streak (will be reset after hard question in processTurn)
+        if (!gameState.isHardQuestion) {
+            gameState.correctStreak++;
+        }
     } else {
         feedback.textContent = '✗ Wrong answer. Your hippo moves normally.';
         feedback.className = 'incorrect';
+        // Reset streak on wrong answer
+        gameState.correctStreak = 0;
     }
 
     // Process turn after short delay
@@ -337,7 +462,14 @@ function processTurn(playerAnsweredCorrect) {
             // Player movement
             movement = hippo.baseSpeed;
             if (playerAnsweredCorrect) {
-                movement += hippo.baseSpeed * hippo.bonus;
+                let bonusMultiplier = hippo.bonus;
+
+                // Apply 1.5x multiplier for hard questions
+                if (gameState.isHardQuestion) {
+                    bonusMultiplier *= 1.5;
+                }
+
+                movement += hippo.baseSpeed * bonusMultiplier;
             }
         } else {
             // AI movement (random with some variance)
@@ -346,6 +478,11 @@ function processTurn(playerAnsweredCorrect) {
 
         hippo.position = Math.min(hippo.position + movement, gameState.raceDistance);
     });
+
+    // Reset streak after hard question (whether correct or wrong)
+    if (gameState.isHardQuestion) {
+        gameState.correctStreak = 0;
+    }
 
     // Update visuals
     updateRacePositions();
@@ -426,6 +563,9 @@ function resetGame() {
     gameState.selectedHippo = null;
     gameState.currentTurn = 1;
     gameState.usedQuestions = [];
+    gameState.usedHardQuestions = [];
+    gameState.correctStreak = 0;
+    gameState.isHardQuestion = false;
 
     document.getElementById('end-screen').classList.remove('active');
     document.getElementById('selection-screen').classList.add('active');

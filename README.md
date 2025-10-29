@@ -12,21 +12,30 @@ A fun, interactive web-based racing game where you choose a hippo and race again
 
 2. **Answer Trivia Questions**: Each turn, you'll be asked an animal-themed trivia question with multiple choice answers.
 
-3. **Race to the Finish**:
+3. **Build Your Streak**:
+   - Answer 2 questions correctly in a row to unlock a HARD QUESTION!
+   - Hard questions are more challenging but reward 1.5x bonus multiplier
+   - Your current streak is displayed with a fire emoji 🔥
+   - Streak resets after a hard question or wrong answer
+
+4. **Race to the Finish**:
    - All hippos move forward each turn
    - If you answer correctly, your hippo gets a speed boost based on its bonus multiplier
    - Wrong answers mean your hippo moves at base speed only
    - AI opponents move at their base speed with slight random variance
 
-4. **Win the Race**: First hippo to reach the finish line wins!
+5. **Win the Race**: First hippo to reach the finish line wins!
 
 ## Game Features
 
 - **4 Unique Hippos**: Each with distinct stats (Speed, Acceleration, Bonus Multiplier)
-- **15 Trivia Questions**: Animal-themed multiple choice questions
+- **15 Normal Trivia Questions**: Animal-themed multiple choice questions
+- **12 Hard Trivia Questions**: Challenging questions that unlock after 2-correct streaks
+- **Streak System**: Build momentum with consecutive correct answers
+- **Bonus Multiplier System**: Hard questions award 1.5x bonus on top of your hippo's bonus
 - **Dynamic Racing**: Visual race track with real-time position updates
 - **AI Opponents**: Compete against 3 AI-controlled hippos
-- **Beautiful UI**: Smooth animations and responsive design
+- **Beautiful UI**: Smooth animations, pulsing effects, and responsive design
 
 ## Installation & Setup
 
@@ -46,6 +55,9 @@ A fun, interactive web-based racing game where you choose a hippo and race again
 - **Speed vs Bonus**: Higher base speed means consistent progress, higher bonus multiplier means bigger rewards for correct answers
 - **Know Your Trivia**: The questions cover various animal facts - from basic to challenging
 - **Choose Wisely**: Pick a hippo that matches your trivia knowledge confidence level
+- **Build Streaks**: Try to answer 2 questions correctly to unlock hard questions
+- **Risk vs Reward**: Hard questions give 1.5x bonus but are more challenging - perfect for hippos with high bonus multipliers like Lightning!
+- **Streak Strategy**: If you have a streak going and aren't confident, remember that wrong answers reset your streak
 
 ## Browser Compatibility
 
