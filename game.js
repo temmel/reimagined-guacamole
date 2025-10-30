@@ -774,26 +774,11 @@ function handleAnswer(selectedIndex) {
             processTurn();
         }, 1500);
     } else {
-        // Next player's turn
+        // Next player's turn - show NEW question
         setTimeout(() => {
-            showSameQuestionForNextPlayer();
+            showNextQuestion();
         }, 1500);
     }
-}
-
-// Show same question for next player
-function showSameQuestionForNextPlayer() {
-    // Re-enable buttons and clear feedback
-    document.getElementById('feedback').textContent = '';
-    document.getElementById('feedback').className = '';
-
-    document.querySelectorAll('.answer-btn').forEach(btn => {
-        btn.disabled = false;
-        btn.classList.remove('correct', 'incorrect');
-    });
-
-    // Update player info
-    updatePlayerInfo();
 }
 
 // Process turn

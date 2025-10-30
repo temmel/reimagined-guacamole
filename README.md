@@ -13,11 +13,11 @@ A fun, interactive web-based racing game where you choose a hippo and race again
    - **Bubbles**: Balanced all-arounder (Balanced stats)
 
 3. **Answer Trivia Questions**:
-   - Same question shown to all players
+   - Each player gets their **own unique question** during their turn
    - Players answer **sequentially** (Player 1, then Player 2, then Player 3)
-   - Questions alternate between EASY and HARD difficulty:
-     - **Turn 1, 3, 5...** = EASY questions (Ages 6-9)
-     - **Turn 2, 4, 6...** = HARD questions (Ages 10-13)
+   - All questions in a round have the same difficulty:
+     - **Turn 1, 3, 5...** = All players get EASY questions (Ages 6-9)
+     - **Turn 2, 4, 6...** = All players get HARD questions (Ages 10-13)
    - Answer choices are randomized each time
 
 4. **Race to the Finish**:
@@ -70,8 +70,8 @@ A fun, interactive web-based racing game where you choose a hippo and race again
 - **Randomized Answers**: Pay attention! Answer order changes each time, so you can't memorize positions
 - **Multiplayer Strategy**:
   - In a 3-player game, coordinate who picks which hippo
-  - Watch other players' answers to learn from their choices
-  - Remember: everyone sees the same question, so work together or compete!
+  - Each player gets different questions, so everyone has a fair chance
+  - All players get the same difficulty level in each round (all easy or all hard)
 
 ## Browser Compatibility
 
