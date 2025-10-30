@@ -5,9 +5,8 @@ const gameState = {
     raceDistance: 100,
     hippos: [],
     currentQuestionIndex: 0,
-    usedQuestions: [],
+    usedEasyQuestions: [],
     usedHardQuestions: [],
-    correctStreak: 0,
     isHardQuestion: false
 };
 
@@ -71,72 +70,8 @@ const hippoData = [
     }
 ];
 
-// Hard Trivia Questions
-const hardTriviaQuestions = [
-    {
-        question: "What is the only mammal capable of true flight?",
-        answers: ["Flying Squirrel", "Sugar Glider", "Bat", "Flying Lemur"],
-        correct: 2
-    },
-    {
-        question: "How many species of venomous snakes are there approximately?",
-        answers: ["200", "400", "600", "800"],
-        correct: 2
-    },
-    {
-        question: "What percentage of their body weight can ants lift?",
-        answers: ["10-20 times", "30-40 times", "50-100 times", "100-150 times"],
-        correct: 2
-    },
-    {
-        question: "Which animal has the most powerful bite force?",
-        answers: ["Great White Shark", "Saltwater Crocodile", "Hippopotamus", "Nile Crocodile"],
-        correct: 1
-    },
-    {
-        question: "How many chambers does a cow's stomach have?",
-        answers: ["Two", "Three", "Four", "Five"],
-        correct: 2
-    },
-    {
-        question: "What is the gestation period of an African elephant?",
-        answers: ["12 months", "18 months", "22 months", "28 months"],
-        correct: 2
-    },
-    {
-        question: "Which bird has the largest wingspan?",
-        answers: ["Andean Condor", "Wandering Albatross", "California Condor", "Bald Eagle"],
-        correct: 1
-    },
-    {
-        question: "How fast can a peregrine falcon dive?",
-        answers: ["150 mph", "200 mph", "240 mph", "300 mph"],
-        correct: 2
-    },
-    {
-        question: "What temperature is a polar bear's skin?",
-        answers: ["White", "Pink", "Black", "Gray"],
-        correct: 2
-    },
-    {
-        question: "How many neurons does an octopus have approximately?",
-        answers: ["100 million", "300 million", "500 million", "1 billion"],
-        correct: 2
-    },
-    {
-        question: "What is the only continent without native reptiles?",
-        answers: ["Europe", "Antarctica", "Australia", "North America"],
-        correct: 1
-    },
-    {
-        question: "How long can a Galapagos tortoise live?",
-        answers: ["50 years", "100 years", "150 years", "Over 175 years"],
-        correct: 3
-    }
-];
-
-// Trivia Questions
-const triviaQuestions = [
+// Easy Trivia Questions (Ages 6-9)
+const easyQuestions = [
     {
         question: "What is the largest land animal?",
         answers: ["Elephant", "Giraffe", "Hippopotamus", "Rhinoceros"],
@@ -211,6 +146,285 @@ const triviaQuestions = [
         question: "What is the national animal of Australia?",
         answers: ["Koala", "Kangaroo", "Emu", "Platypus"],
         correct: 1
+    },
+    {
+        question: "What color is a flamingo?",
+        answers: ["Pink", "Blue", "Green", "Yellow"],
+        correct: 0
+    },
+    {
+        question: "What sound does a cow make?",
+        answers: ["Moo", "Meow", "Woof", "Oink"],
+        correct: 0
+    },
+    {
+        question: "Which animal loves to eat carrots?",
+        answers: ["Rabbit", "Lion", "Snake", "Shark"],
+        correct: 0
+    },
+    {
+        question: "What is a baby dog called?",
+        answers: ["Puppy", "Kitten", "Calf", "Chick"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a trunk?",
+        answers: ["Elephant", "Giraffe", "Zebra", "Tiger"],
+        correct: 0
+    },
+    {
+        question: "What do bees make?",
+        answers: ["Honey", "Milk", "Eggs", "Silk"],
+        correct: 0
+    },
+    {
+        question: "Which animal says 'meow'?",
+        answers: ["Cat", "Dog", "Cow", "Duck"],
+        correct: 0
+    },
+    {
+        question: "What do chickens lay?",
+        answers: ["Eggs", "Milk", "Honey", "Seeds"],
+        correct: 0
+    },
+    {
+        question: "Which animal can hop?",
+        answers: ["Kangaroo", "Snake", "Fish", "Worm"],
+        correct: 0
+    },
+    {
+        question: "What color is a polar bear?",
+        answers: ["White", "Brown", "Black", "Gray"],
+        correct: 0
+    },
+    {
+        question: "Which animal lives in a hive?",
+        answers: ["Bee", "Dog", "Cat", "Horse"],
+        correct: 0
+    },
+    {
+        question: "What do caterpillars turn into?",
+        answers: ["Butterflies", "Bees", "Birds", "Spiders"],
+        correct: 0
+    },
+    {
+        question: "Which animal has stripes?",
+        answers: ["Zebra", "Elephant", "Hippo", "Rhino"],
+        correct: 0
+    },
+    {
+        question: "What do fish use to breathe underwater?",
+        answers: ["Gills", "Lungs", "Nose", "Mouth"],
+        correct: 0
+    },
+    {
+        question: "Which animal is the tallest?",
+        answers: ["Giraffe", "Elephant", "Bear", "Lion"],
+        correct: 0
+    },
+    {
+        question: "What do tadpoles grow up to be?",
+        answers: ["Frogs", "Fish", "Turtles", "Snakes"],
+        correct: 0
+    },
+    {
+        question: "Which bird cannot fly?",
+        answers: ["Penguin", "Robin", "Eagle", "Parrot"],
+        correct: 0
+    },
+    {
+        question: "What does a squirrel like to eat?",
+        answers: ["Nuts", "Meat", "Fish", "Grass"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a long neck?",
+        answers: ["Giraffe", "Dog", "Cat", "Pig"],
+        correct: 0
+    },
+    {
+        question: "What is a baby cat called?",
+        answers: ["Kitten", "Puppy", "Calf", "Foal"],
+        correct: 0
+    },
+    {
+        question: "Which animal lives in the ocean?",
+        answers: ["Whale", "Lion", "Elephant", "Tiger"],
+        correct: 0
+    },
+    {
+        question: "What do cows give us to drink?",
+        answers: ["Milk", "Juice", "Water", "Soda"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a shell?",
+        answers: ["Turtle", "Dog", "Cat", "Rabbit"],
+        correct: 0
+    },
+    {
+        question: "What color is a ladybug?",
+        answers: ["Red with black spots", "Blue", "Green", "Yellow"],
+        correct: 0
+    },
+    {
+        question: "Which animal loves to eat bananas?",
+        answers: ["Monkey", "Lion", "Wolf", "Bear"],
+        correct: 0
+    }
+];
+
+// Hard Trivia Questions (Ages 10-13)
+const hardQuestions = [
+    {
+        question: "What is the only mammal capable of true flight?",
+        answers: ["Bat", "Flying Squirrel", "Sugar Glider", "Flying Lemur"],
+        correct: 0
+    },
+    {
+        question: "How many species of venomous snakes are there approximately?",
+        answers: ["600", "200", "400", "800"],
+        correct: 0
+    },
+    {
+        question: "What percentage of their body weight can ants lift?",
+        answers: ["50-100 times", "10-20 times", "30-40 times", "100-150 times"],
+        correct: 0
+    },
+    {
+        question: "Which animal has the most powerful bite force?",
+        answers: ["Saltwater Crocodile", "Great White Shark", "Hippopotamus", "Nile Crocodile"],
+        correct: 0
+    },
+    {
+        question: "How many chambers does a cow's stomach have?",
+        answers: ["Four", "Two", "Three", "Five"],
+        correct: 0
+    },
+    {
+        question: "What is the gestation period of an African elephant?",
+        answers: ["22 months", "12 months", "18 months", "28 months"],
+        correct: 0
+    },
+    {
+        question: "Which bird has the largest wingspan?",
+        answers: ["Wandering Albatross", "Andean Condor", "California Condor", "Bald Eagle"],
+        correct: 0
+    },
+    {
+        question: "How fast can a peregrine falcon dive?",
+        answers: ["240 mph", "150 mph", "200 mph", "300 mph"],
+        correct: 0
+    },
+    {
+        question: "What color is a polar bear's skin?",
+        answers: ["Black", "White", "Pink", "Gray"],
+        correct: 0
+    },
+    {
+        question: "How many neurons does an octopus have approximately?",
+        answers: ["500 million", "100 million", "300 million", "1 billion"],
+        correct: 0
+    },
+    {
+        question: "What is the only continent without native reptiles?",
+        answers: ["Antarctica", "Europe", "Australia", "North America"],
+        correct: 0
+    },
+    {
+        question: "How long can a Galapagos tortoise live?",
+        answers: ["Over 175 years", "50 years", "100 years", "150 years"],
+        correct: 0
+    },
+    {
+        question: "What is the only bird that can fly backwards?",
+        answers: ["Hummingbird", "Eagle", "Sparrow", "Parrot"],
+        correct: 0
+    },
+    {
+        question: "How many bones does a shark have?",
+        answers: ["Zero (cartilage)", "50", "100", "200"],
+        correct: 0
+    },
+    {
+        question: "What percentage of a jellyfish is water?",
+        answers: ["95%", "50%", "75%", "100%"],
+        correct: 0
+    },
+    {
+        question: "How many eyes does a bee have?",
+        answers: ["Five", "Two", "Four", "Six"],
+        correct: 0
+    },
+    {
+        question: "What is the fastest marine animal?",
+        answers: ["Sailfish", "Dolphin", "Shark", "Tuna"],
+        correct: 0
+    },
+    {
+        question: "How long can a snail sleep?",
+        answers: ["Up to 3 years", "1 month", "1 year", "6 months"],
+        correct: 0
+    },
+    {
+        question: "Which animal has the largest brain?",
+        answers: ["Sperm Whale", "Elephant", "Human", "Dolphin"],
+        correct: 0
+    },
+    {
+        question: "How many teeth does a mosquito have?",
+        answers: ["47", "0", "10", "25"],
+        correct: 0
+    },
+    {
+        question: "What is the lifespan of a dragonfly?",
+        answers: ["6 months", "1 year", "2 weeks", "1 month"],
+        correct: 0
+    },
+    {
+        question: "How many hearts does a worm have?",
+        answers: ["5", "1", "2", "3"],
+        correct: 0
+    },
+    {
+        question: "What temperature do Arctic foxes survive?",
+        answers: ["-70°C (-94°F)", "-20°C (-4°F)", "-40°C (-40°F)", "-50°C (-58°F)"],
+        correct: 0
+    },
+    {
+        question: "How far can an owl turn its head?",
+        answers: ["270 degrees", "180 degrees", "360 degrees", "90 degrees"],
+        correct: 0
+    },
+    {
+        question: "What is the smallest bird in the world?",
+        answers: ["Bee Hummingbird", "Sparrow", "Finch", "Wren"],
+        correct: 0
+    },
+    {
+        question: "How many species of ants exist worldwide?",
+        answers: ["12,000+", "1,000", "5,000", "20,000"],
+        correct: 0
+    },
+    {
+        question: "What is the only mammal that lays eggs?",
+        answers: ["Platypus", "Echidna", "Both A and B", "Kangaroo"],
+        correct: 2
+    },
+    {
+        question: "How loud can a lion's roar be heard?",
+        answers: ["5 miles away", "1 mile away", "2 miles away", "10 miles away"],
+        correct: 0
+    },
+    {
+        question: "How many stomachs does a dolphin have?",
+        answers: ["Two", "One", "Three", "Four"],
+        correct: 0
+    },
+    {
+        question: "What is the lifespan of a mayfly?",
+        answers: ["24 hours", "1 week", "1 month", "3 days"],
+        correct: 0
     }
 ];
 
@@ -280,9 +494,8 @@ function selectHippo(hippoId) {
 function startRace() {
     // Initialize race state
     gameState.currentTurn = 1;
-    gameState.usedQuestions = [];
+    gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
-    gameState.correctStreak = 0;
     gameState.isHardQuestion = false;
     gameState.hippos = hippoData.map(hippo => ({
         ...hippo,
@@ -326,57 +539,77 @@ function renderRaceTrack() {
 // Update player info
 function updatePlayerInfo() {
     document.querySelector('#turn-counter span').textContent = gameState.currentTurn;
-
-    const streakDisplay = gameState.correctStreak > 0
-        ? ` | Streak: <span style="color: #ff9800; font-weight: bold;">${gameState.correctStreak} 🔥</span>`
-        : '';
+    const difficulty = gameState.isHardQuestion ? ' | <span style="color: #ff9800; font-weight: bold;">HARD</span>' : ' | <span style="color: #4caf50; font-weight: bold;">EASY</span>';
 
     document.getElementById('player-info').innerHTML = `
-        Playing as: <strong>${gameState.selectedHippo.name}</strong>${streakDisplay}
+        Playing as: <strong>${gameState.selectedHippo.name}</strong>${difficulty}
     `;
+}
+
+// Shuffle array helper function
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 // Show next question
 function showNextQuestion() {
-    // Check if we should show a hard question (2 correct in a row)
-    const isHardQuestion = gameState.correctStreak >= 2;
+    // Alternate between easy and hard questions (turn 1 = easy, turn 2 = hard, etc.)
+    const isHardQuestion = gameState.currentTurn % 2 === 0;
     gameState.isHardQuestion = isHardQuestion;
 
-    let question;
+    let question, questionPool, usedList;
 
     if (isHardQuestion) {
-        // Get unused hard question
-        const availableQuestions = hardTriviaQuestions.filter((_, index) =>
-            !gameState.usedHardQuestions.includes(index)
-        );
-
-        if (availableQuestions.length === 0) {
-            gameState.usedHardQuestions = [];
-        }
-
-        const questionIndex = Math.floor(Math.random() * (availableQuestions.length || hardTriviaQuestions.length));
-        const actualIndex = hardTriviaQuestions.indexOf(availableQuestions[questionIndex] || hardTriviaQuestions[questionIndex]);
-        gameState.currentQuestionIndex = actualIndex;
-        gameState.usedHardQuestions.push(actualIndex);
-
-        question = hardTriviaQuestions[actualIndex];
+        questionPool = hardQuestions;
+        usedList = gameState.usedHardQuestions;
     } else {
-        // Get unused normal question
-        const availableQuestions = triviaQuestions.filter((_, index) =>
-            !gameState.usedQuestions.includes(index)
-        );
-
-        if (availableQuestions.length === 0) {
-            gameState.usedQuestions = [];
-        }
-
-        const questionIndex = Math.floor(Math.random() * availableQuestions.length);
-        const actualIndex = triviaQuestions.indexOf(availableQuestions[questionIndex]);
-        gameState.currentQuestionIndex = actualIndex;
-        gameState.usedQuestions.push(actualIndex);
-
-        question = triviaQuestions[actualIndex];
+        questionPool = easyQuestions;
+        usedList = gameState.usedEasyQuestions;
     }
+
+    // Get unused question
+    const availableQuestions = questionPool.filter((_, index) => !usedList.includes(index));
+
+    if (availableQuestions.length === 0) {
+        // Reset used questions if all have been used
+        if (isHardQuestion) {
+            gameState.usedHardQuestions = [];
+        } else {
+            gameState.usedEasyQuestions = [];
+        }
+    }
+
+    const questionIndex = Math.floor(Math.random() * (availableQuestions.length || questionPool.length));
+    const actualIndex = questionPool.indexOf(availableQuestions[questionIndex] || questionPool[questionIndex]);
+    gameState.currentQuestionIndex = actualIndex;
+
+    if (isHardQuestion) {
+        gameState.usedHardQuestions.push(actualIndex);
+    } else {
+        gameState.usedEasyQuestions.push(actualIndex);
+    }
+
+    question = questionPool[actualIndex];
+
+    // Create shuffled answers with tracking
+    const answersWithIndex = question.answers.map((answer, index) => ({
+        text: answer,
+        originalIndex: index
+    }));
+    const shuffledAnswers = shuffleArray(answersWithIndex);
+
+    // Find the new position of the correct answer
+    const correctAnswerPosition = shuffledAnswers.findIndex(
+        item => item.originalIndex === question.correct
+    );
+
+    // Store for answer checking
+    gameState.currentCorrectAnswer = correctAnswerPosition;
 
     // Render question with hard indicator if applicable
     const questionContainer = document.getElementById('question-container');
@@ -397,28 +630,29 @@ function showNextQuestion() {
     const answersContainer = document.getElementById('answers-container');
     answersContainer.innerHTML = '';
 
-    question.answers.forEach((answer, index) => {
+    shuffledAnswers.forEach((answerObj, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
         if (isHardQuestion) {
             btn.classList.add('hard-mode');
         }
-        btn.textContent = answer;
+        btn.textContent = answerObj.text;
         btn.addEventListener('click', () => handleAnswer(index));
         answersContainer.appendChild(btn);
     });
+
+    // Update player info to show difficulty
+    updatePlayerInfo();
 }
 
 // Handle answer
 function handleAnswer(selectedIndex) {
-    const questionArray = gameState.isHardQuestion ? hardTriviaQuestions : triviaQuestions;
-    const question = questionArray[gameState.currentQuestionIndex];
-    const isCorrect = selectedIndex === question.correct;
+    const isCorrect = selectedIndex === gameState.currentCorrectAnswer;
 
     // Disable all buttons
     document.querySelectorAll('.answer-btn').forEach((btn, index) => {
         btn.disabled = true;
-        if (index === question.correct) {
+        if (index === gameState.currentCorrectAnswer) {
             btn.classList.add('correct');
         } else if (index === selectedIndex && !isCorrect) {
             btn.classList.add('incorrect');
@@ -435,15 +669,9 @@ function handleAnswer(selectedIndex) {
             feedback.textContent = '✓ Correct! Your hippo gets a speed boost!';
             feedback.className = 'correct';
         }
-        // Increment streak (will be reset after hard question in processTurn)
-        if (!gameState.isHardQuestion) {
-            gameState.correctStreak++;
-        }
     } else {
         feedback.textContent = '✗ Wrong answer. Your hippo moves normally.';
         feedback.className = 'incorrect';
-        // Reset streak on wrong answer
-        gameState.correctStreak = 0;
     }
 
     // Process turn after short delay
@@ -479,11 +707,6 @@ function processTurn(playerAnsweredCorrect) {
         hippo.position = Math.min(hippo.position + movement, gameState.raceDistance);
     });
 
-    // Reset streak after hard question (whether correct or wrong)
-    if (gameState.isHardQuestion) {
-        gameState.correctStreak = 0;
-    }
-
     // Update visuals
     updateRacePositions();
 
@@ -495,7 +718,6 @@ function processTurn(playerAnsweredCorrect) {
     } else {
         // Continue race
         gameState.currentTurn++;
-        updatePlayerInfo();
         setTimeout(() => showNextQuestion(), 2000);
     }
 }
@@ -562,9 +784,8 @@ function setupEventListeners() {
 function resetGame() {
     gameState.selectedHippo = null;
     gameState.currentTurn = 1;
-    gameState.usedQuestions = [];
+    gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
-    gameState.correctStreak = 0;
     gameState.isHardQuestion = false;
 
     document.getElementById('end-screen').classList.remove('active');
