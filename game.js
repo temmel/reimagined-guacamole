@@ -1,13 +1,18 @@
 // Game State
 const gameState = {
-    selectedHippo: null,
+    numPlayers: 1,
+    players: [], // Array of {playerNumber, hippoId, name}
+    currentPlayerIndex: 0,
+    playerAnswers: [], // Stores answers for current turn
     currentTurn: 1,
     raceDistance: 100,
     hippos: [],
     currentQuestionIndex: 0,
     usedEasyQuestions: [],
     usedHardQuestions: [],
-    isHardQuestion: false
+    isHardQuestion: false,
+    currentSelectionPlayer: 1,
+    takenHippos: []
 };
 
 // Hippo Data
@@ -430,8 +435,25 @@ const hardQuestions = [
 
 // Initialize game
 function initGame() {
-    renderHippoSelection();
     setupEventListeners();
+}
+
+// Setup player count selection
+function setupPlayerCountSelection() {
+    document.querySelectorAll('.player-count-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            gameState.numPlayers = parseInt(e.target.dataset.players);
+            gameState.currentSelectionPlayer = 1;
+            gameState.takenHippos = [];
+            gameState.players = [];
+
+            // Switch to hippo selection
+            document.getElementById('player-count-screen').classList.remove('active');
+            document.getElementById('selection-screen').classList.add('active');
+
+            renderHippoSelection();
+        });
+    });
 }
 
 // Render hippo selection screen
@@ -439,10 +461,22 @@ function renderHippoSelection() {
     const container = document.getElementById('hippo-selection');
     container.innerHTML = '';
 
+    // Update title
+    document.getElementById('selection-title').textContent =
+        `Player ${gameState.currentSelectionPlayer}: Choose Your Hippo!`;
+
     hippoData.forEach(hippo => {
         const card = document.createElement('div');
         card.className = 'hippo-card';
+        const isTaken = gameState.takenHippos.includes(hippo.id);
+
+        if (isTaken) {
+            card.classList.add('taken');
+        }
+
         card.dataset.hippoId = hippo.id;
+
+        const takenLabel = isTaken ? '<div style="color: #f44336; font-weight: bold; margin-top: 10px;">TAKEN</div>' : '';
 
         card.innerHTML = `
             <div class="hippo-icon" style="color: ${hippo.color}">${hippo.icon}</div>
@@ -468,40 +502,81 @@ function renderHippoSelection() {
                     </div>
                 </div>
             </div>
+            ${takenLabel}
         `;
 
-        card.addEventListener('click', () => selectHippo(hippo.id));
+        if (!isTaken) {
+            card.addEventListener('click', () => selectHippo(hippo.id));
+        }
         container.appendChild(card);
     });
 }
 
 // Select a hippo
 function selectHippo(hippoId) {
-    gameState.selectedHippo = hippoData.find(h => h.id === hippoId);
+    if (gameState.takenHippos.includes(hippoId)) return;
+
+    const hippo = hippoData.find(h => h.id === hippoId);
 
     // Update UI
     document.querySelectorAll('.hippo-card').forEach(card => {
         card.classList.remove('selected');
-        if (card.dataset.hippoId == hippoId) {
+        if (card.dataset.hippoId == hippoId && !card.classList.contains('taken')) {
             card.classList.add('selected');
         }
     });
 
-    document.getElementById('start-race-btn').disabled = false;
+    // Store temporarily
+    gameState.tempSelectedHippo = hippo;
+    document.getElementById('confirm-hippo-btn').disabled = false;
+}
+
+// Confirm hippo selection for current player
+function confirmHippoSelection() {
+    if (!gameState.tempSelectedHippo) return;
+
+    // Add player
+    gameState.players.push({
+        playerNumber: gameState.currentSelectionPlayer,
+        hippoId: gameState.tempSelectedHippo.id,
+        name: gameState.tempSelectedHippo.name
+    });
+
+    gameState.takenHippos.push(gameState.tempSelectedHippo.id);
+    gameState.currentSelectionPlayer++;
+
+    // Check if all players have selected
+    if (gameState.currentSelectionPlayer > gameState.numPlayers) {
+        // All players selected, start race
+        startRace();
+    } else {
+        // Next player selects
+        gameState.tempSelectedHippo = null;
+        document.getElementById('confirm-hippo-btn').disabled = true;
+        renderHippoSelection();
+    }
 }
 
 // Start the race
 function startRace() {
     // Initialize race state
     gameState.currentTurn = 1;
+    gameState.currentPlayerIndex = 0;
+    gameState.playerAnswers = [];
     gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
     gameState.isHardQuestion = false;
-    gameState.hippos = hippoData.map(hippo => ({
-        ...hippo,
-        position: 0,
-        isPlayer: hippo.id === gameState.selectedHippo.id
-    }));
+
+    // Create hippos - players + AI
+    gameState.hippos = hippoData.map(hippo => {
+        const player = gameState.players.find(p => p.hippoId === hippo.id);
+        return {
+            ...hippo,
+            position: 0,
+            isPlayer: !!player,
+            playerNumber: player ? player.playerNumber : null
+        };
+    });
 
     // Switch to race screen
     document.getElementById('selection-screen').classList.remove('active');
@@ -525,10 +600,12 @@ function renderRaceTrack() {
         lane.className = 'race-lane';
         lane.id = `lane-${hippo.id}`;
 
+        const playerLabel = hippo.isPlayer ? ` (P${hippo.playerNumber})` : ' (AI)';
+
         lane.innerHTML = `
             <div class="lane-background" style="width: 0%"></div>
             <div class="hippo-racer" style="color: ${hippo.color}">${hippo.icon}</div>
-            <div class="hippo-label">${hippo.name}${hippo.isPlayer ? ' (You)' : ''}</div>
+            <div class="hippo-label">${hippo.name}${playerLabel}</div>
             <div class="finish-line"></div>
         `;
 
@@ -541,9 +618,15 @@ function updatePlayerInfo() {
     document.querySelector('#turn-counter span').textContent = gameState.currentTurn;
     const difficulty = gameState.isHardQuestion ? ' | <span style="color: #ff9800; font-weight: bold;">HARD</span>' : ' | <span style="color: #4caf50; font-weight: bold;">EASY</span>';
 
-    document.getElementById('player-info').innerHTML = `
-        Playing as: <strong>${gameState.selectedHippo.name}</strong>${difficulty}
-    `;
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer) {
+        const currentHippo = hippoData.find(h => h.hippoId === currentPlayer.hippoId);
+        document.getElementById('current-player-info').innerHTML = `
+            Player ${currentPlayer.playerNumber}'s Turn: <span style="color: ${hippoData.find(h => h.id === currentPlayer.hippoId).color}">${currentPlayer.name}</span>
+        `;
+    }
+
+    document.getElementById('player-info').innerHTML = `${difficulty}`;
 }
 
 // Shuffle array helper function
@@ -648,6 +731,14 @@ function showNextQuestion() {
 // Handle answer
 function handleAnswer(selectedIndex) {
     const isCorrect = selectedIndex === gameState.currentCorrectAnswer;
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    // Store answer for this player
+    gameState.playerAnswers.push({
+        playerNumber: currentPlayer.playerNumber,
+        hippoId: currentPlayer.hippoId,
+        isCorrect: isCorrect
+    });
 
     // Disable all buttons
     document.querySelectorAll('.answer-btn').forEach((btn, index) => {
@@ -663,33 +754,60 @@ function handleAnswer(selectedIndex) {
     const feedback = document.getElementById('feedback');
     if (isCorrect) {
         if (gameState.isHardQuestion) {
-            feedback.textContent = '✓ AMAZING! Hard question correct! MEGA BOOST!';
+            feedback.textContent = `✓ Player ${currentPlayer.playerNumber} - AMAZING! Hard question correct! MEGA BOOST!`;
             feedback.className = 'correct hard';
         } else {
-            feedback.textContent = '✓ Correct! Your hippo gets a speed boost!';
+            feedback.textContent = `✓ Player ${currentPlayer.playerNumber} - Correct! Your hippo gets a speed boost!`;
             feedback.className = 'correct';
         }
     } else {
-        feedback.textContent = '✗ Wrong answer. Your hippo moves normally.';
+        feedback.textContent = `✗ Player ${currentPlayer.playerNumber} - Wrong answer. Your hippo moves normally.`;
         feedback.className = 'incorrect';
     }
 
-    // Process turn after short delay
-    setTimeout(() => {
-        processTurn(isCorrect);
-    }, 1500);
+    // Check if all players have answered
+    gameState.currentPlayerIndex++;
+
+    if (gameState.currentPlayerIndex >= gameState.numPlayers) {
+        // All players answered, process turn
+        setTimeout(() => {
+            processTurn();
+        }, 1500);
+    } else {
+        // Next player's turn
+        setTimeout(() => {
+            showSameQuestionForNextPlayer();
+        }, 1500);
+    }
+}
+
+// Show same question for next player
+function showSameQuestionForNextPlayer() {
+    // Re-enable buttons and clear feedback
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = '';
+
+    document.querySelectorAll('.answer-btn').forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('correct', 'incorrect');
+    });
+
+    // Update player info
+    updatePlayerInfo();
 }
 
 // Process turn
-function processTurn(playerAnsweredCorrect) {
+function processTurn() {
     // Move all hippos
     gameState.hippos.forEach(hippo => {
         let movement;
 
         if (hippo.isPlayer) {
-            // Player movement
+            // Find this player's answer
+            const playerAnswer = gameState.playerAnswers.find(a => a.hippoId === hippo.id);
             movement = hippo.baseSpeed;
-            if (playerAnsweredCorrect) {
+
+            if (playerAnswer && playerAnswer.isCorrect) {
                 let bonusMultiplier = hippo.bonus;
 
                 // Apply 1.5x multiplier for hard questions
@@ -701,7 +819,16 @@ function processTurn(playerAnsweredCorrect) {
             }
         } else {
             // AI movement (random with some variance)
-            movement = hippo.baseSpeed + Math.random() * 5;
+            const aiCorrect = Math.random() > 0.5; // 50% chance AI answers correctly
+            movement = hippo.baseSpeed;
+
+            if (aiCorrect) {
+                let bonusMultiplier = hippo.bonus;
+                if (gameState.isHardQuestion) {
+                    bonusMultiplier *= 1.5;
+                }
+                movement += hippo.baseSpeed * bonusMultiplier;
+            }
         }
 
         hippo.position = Math.min(hippo.position + movement, gameState.raceDistance);
@@ -716,8 +843,10 @@ function processTurn(playerAnsweredCorrect) {
     if (winner) {
         setTimeout(() => endRace(winner), 1000);
     } else {
-        // Continue race
+        // Continue race - reset for next turn
         gameState.currentTurn++;
+        gameState.currentPlayerIndex = 0;
+        gameState.playerAnswers = [];
         setTimeout(() => showNextQuestion(), 2000);
     }
 }
@@ -750,10 +879,10 @@ function endRace(winner) {
     // Show results
     const endTitle = document.getElementById('end-title');
     if (winner.isPlayer) {
-        endTitle.textContent = '🏆 You Won! 🏆';
+        endTitle.textContent = `🏆 Player ${winner.playerNumber} (${winner.name}) Won! 🏆`;
         endTitle.style.color = '#4caf50';
     } else {
-        endTitle.textContent = `${winner.name} Won!`;
+        endTitle.textContent = `${winner.name} (AI) Won!`;
         endTitle.style.color = '#f44336';
     }
 
@@ -763,10 +892,11 @@ function endRace(winner) {
     rankings.forEach((hippo, index) => {
         const resultItem = document.createElement('div');
         resultItem.className = 'result-item';
+        const label = hippo.isPlayer ? ` (P${hippo.playerNumber})` : ' (AI)';
         resultItem.innerHTML = `
             <span class="result-position">#${index + 1}</span>
             <span class="result-hippo" style="color: ${hippo.color}">
-                ${hippo.icon} ${hippo.name}${hippo.isPlayer ? ' (You)' : ''}
+                ${hippo.icon} ${hippo.name}${label}
             </span>
             <span>${hippo.position.toFixed(1)} / ${gameState.raceDistance}</span>
         `;
@@ -776,23 +906,26 @@ function endRace(winner) {
 
 // Setup event listeners
 function setupEventListeners() {
-    document.getElementById('start-race-btn').addEventListener('click', startRace);
+    setupPlayerCountSelection();
+    document.getElementById('confirm-hippo-btn').addEventListener('click', confirmHippoSelection);
     document.getElementById('play-again-btn').addEventListener('click', resetGame);
 }
 
 // Reset game
 function resetGame() {
-    gameState.selectedHippo = null;
+    gameState.numPlayers = 1;
+    gameState.players = [];
+    gameState.currentPlayerIndex = 0;
+    gameState.playerAnswers = [];
     gameState.currentTurn = 1;
     gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
     gameState.isHardQuestion = false;
+    gameState.currentSelectionPlayer = 1;
+    gameState.takenHippos = [];
 
     document.getElementById('end-screen').classList.remove('active');
-    document.getElementById('selection-screen').classList.add('active');
-    document.getElementById('start-race-btn').disabled = true;
-
-    renderHippoSelection();
+    document.getElementById('player-count-screen').classList.add('active');
 }
 
 // Start the game when page loads
