@@ -8,11 +8,22 @@
 </head>
 <body>
     <div id="game-container">
+        <!-- Player Count Selection Screen -->
+        <div id="player-count-screen" class="screen active">
+            <h1>Hippo Race Championship</h1>
+            <h2>How many players?</h2>
+            <div id="player-count-selection">
+                <button class="player-count-btn" data-players="1">1 Player</button>
+                <button class="player-count-btn" data-players="2">2 Players</button>
+                <button class="player-count-btn" data-players="3">3 Players</button>
+            </div>
+        </div>
+
         <!-- Hippo Selection Screen -->
-        <div id="selection-screen" class="screen active">
-            <h1>Choose Your Hippo Racer!</h1>
+        <div id="selection-screen" class="screen">
+            <h1 id="selection-title">Player 1: Choose Your Hippo!</h1>
             <div id="hippo-selection"></div>
-            <button id="start-race-btn" class="main-btn" disabled>Start Race</button>
+            <button id="confirm-hippo-btn" class="main-btn" disabled>Confirm</button>
         </div>
 
         <!-- Race Screen -->
@@ -20,6 +31,7 @@
             <h2>Hippo Race Championship</h2>
             <div id="race-info">
                 <div id="turn-counter">Turn: <span>1</span></div>
+                <div id="current-player-info"></div>
                 <div id="player-info"></div>
             </div>
 

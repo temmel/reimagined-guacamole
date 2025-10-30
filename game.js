@@ -1,14 +1,18 @@
 // Game State
 const gameState = {
-    selectedHippo: null,
+    numPlayers: 1,
+    players: [], // Array of {playerNumber, hippoId, name}
+    currentPlayerIndex: 0,
+    playerAnswers: [], // Stores answers for current turn
     currentTurn: 1,
     raceDistance: 100,
     hippos: [],
     currentQuestionIndex: 0,
-    usedQuestions: [],
+    usedEasyQuestions: [],
     usedHardQuestions: [],
-    correctStreak: 0,
-    isHardQuestion: false
+    isHardQuestion: false,
+    currentSelectionPlayer: 1,
+    takenHippos: []
 };
 
 // Hippo Data
@@ -71,72 +75,8 @@ const hippoData = [
     }
 ];
 
-// Hard Trivia Questions
-const hardTriviaQuestions = [
-    {
-        question: "What is the only mammal capable of true flight?",
-        answers: ["Flying Squirrel", "Sugar Glider", "Bat", "Flying Lemur"],
-        correct: 2
-    },
-    {
-        question: "How many species of venomous snakes are there approximately?",
-        answers: ["200", "400", "600", "800"],
-        correct: 2
-    },
-    {
-        question: "What percentage of their body weight can ants lift?",
-        answers: ["10-20 times", "30-40 times", "50-100 times", "100-150 times"],
-        correct: 2
-    },
-    {
-        question: "Which animal has the most powerful bite force?",
-        answers: ["Great White Shark", "Saltwater Crocodile", "Hippopotamus", "Nile Crocodile"],
-        correct: 1
-    },
-    {
-        question: "How many chambers does a cow's stomach have?",
-        answers: ["Two", "Three", "Four", "Five"],
-        correct: 2
-    },
-    {
-        question: "What is the gestation period of an African elephant?",
-        answers: ["12 months", "18 months", "22 months", "28 months"],
-        correct: 2
-    },
-    {
-        question: "Which bird has the largest wingspan?",
-        answers: ["Andean Condor", "Wandering Albatross", "California Condor", "Bald Eagle"],
-        correct: 1
-    },
-    {
-        question: "How fast can a peregrine falcon dive?",
-        answers: ["150 mph", "200 mph", "240 mph", "300 mph"],
-        correct: 2
-    },
-    {
-        question: "What temperature is a polar bear's skin?",
-        answers: ["White", "Pink", "Black", "Gray"],
-        correct: 2
-    },
-    {
-        question: "How many neurons does an octopus have approximately?",
-        answers: ["100 million", "300 million", "500 million", "1 billion"],
-        correct: 2
-    },
-    {
-        question: "What is the only continent without native reptiles?",
-        answers: ["Europe", "Antarctica", "Australia", "North America"],
-        correct: 1
-    },
-    {
-        question: "How long can a Galapagos tortoise live?",
-        answers: ["50 years", "100 years", "150 years", "Over 175 years"],
-        correct: 3
-    }
-];
-
-// Trivia Questions
-const triviaQuestions = [
+// Easy Trivia Questions (Ages 6-9)
+const easyQuestions = [
     {
         question: "What is the largest land animal?",
         answers: ["Elephant", "Giraffe", "Hippopotamus", "Rhinoceros"],
@@ -211,13 +151,309 @@ const triviaQuestions = [
         question: "What is the national animal of Australia?",
         answers: ["Koala", "Kangaroo", "Emu", "Platypus"],
         correct: 1
+    },
+    {
+        question: "What color is a flamingo?",
+        answers: ["Pink", "Blue", "Green", "Yellow"],
+        correct: 0
+    },
+    {
+        question: "What sound does a cow make?",
+        answers: ["Moo", "Meow", "Woof", "Oink"],
+        correct: 0
+    },
+    {
+        question: "Which animal loves to eat carrots?",
+        answers: ["Rabbit", "Lion", "Snake", "Shark"],
+        correct: 0
+    },
+    {
+        question: "What is a baby dog called?",
+        answers: ["Puppy", "Kitten", "Calf", "Chick"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a trunk?",
+        answers: ["Elephant", "Giraffe", "Zebra", "Tiger"],
+        correct: 0
+    },
+    {
+        question: "What do bees make?",
+        answers: ["Honey", "Milk", "Eggs", "Silk"],
+        correct: 0
+    },
+    {
+        question: "Which animal says 'meow'?",
+        answers: ["Cat", "Dog", "Cow", "Duck"],
+        correct: 0
+    },
+    {
+        question: "What do chickens lay?",
+        answers: ["Eggs", "Milk", "Honey", "Seeds"],
+        correct: 0
+    },
+    {
+        question: "Which animal can hop?",
+        answers: ["Kangaroo", "Snake", "Fish", "Worm"],
+        correct: 0
+    },
+    {
+        question: "What color is a polar bear?",
+        answers: ["White", "Brown", "Black", "Gray"],
+        correct: 0
+    },
+    {
+        question: "Which animal lives in a hive?",
+        answers: ["Bee", "Dog", "Cat", "Horse"],
+        correct: 0
+    },
+    {
+        question: "What do caterpillars turn into?",
+        answers: ["Butterflies", "Bees", "Birds", "Spiders"],
+        correct: 0
+    },
+    {
+        question: "Which animal has stripes?",
+        answers: ["Zebra", "Elephant", "Hippo", "Rhino"],
+        correct: 0
+    },
+    {
+        question: "What do fish use to breathe underwater?",
+        answers: ["Gills", "Lungs", "Nose", "Mouth"],
+        correct: 0
+    },
+    {
+        question: "Which animal is the tallest?",
+        answers: ["Giraffe", "Elephant", "Bear", "Lion"],
+        correct: 0
+    },
+    {
+        question: "What do tadpoles grow up to be?",
+        answers: ["Frogs", "Fish", "Turtles", "Snakes"],
+        correct: 0
+    },
+    {
+        question: "Which bird cannot fly?",
+        answers: ["Penguin", "Robin", "Eagle", "Parrot"],
+        correct: 0
+    },
+    {
+        question: "What does a squirrel like to eat?",
+        answers: ["Nuts", "Meat", "Fish", "Grass"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a long neck?",
+        answers: ["Giraffe", "Dog", "Cat", "Pig"],
+        correct: 0
+    },
+    {
+        question: "What is a baby cat called?",
+        answers: ["Kitten", "Puppy", "Calf", "Foal"],
+        correct: 0
+    },
+    {
+        question: "Which animal lives in the ocean?",
+        answers: ["Whale", "Lion", "Elephant", "Tiger"],
+        correct: 0
+    },
+    {
+        question: "What do cows give us to drink?",
+        answers: ["Milk", "Juice", "Water", "Soda"],
+        correct: 0
+    },
+    {
+        question: "Which animal has a shell?",
+        answers: ["Turtle", "Dog", "Cat", "Rabbit"],
+        correct: 0
+    },
+    {
+        question: "What color is a ladybug?",
+        answers: ["Red with black spots", "Blue", "Green", "Yellow"],
+        correct: 0
+    },
+    {
+        question: "Which animal loves to eat bananas?",
+        answers: ["Monkey", "Lion", "Wolf", "Bear"],
+        correct: 0
+    }
+];
+
+// Hard Trivia Questions (Ages 10-13)
+const hardQuestions = [
+    {
+        question: "What is the only mammal capable of true flight?",
+        answers: ["Bat", "Flying Squirrel", "Sugar Glider", "Flying Lemur"],
+        correct: 0
+    },
+    {
+        question: "How many species of venomous snakes are there approximately?",
+        answers: ["600", "200", "400", "800"],
+        correct: 0
+    },
+    {
+        question: "What percentage of their body weight can ants lift?",
+        answers: ["50-100 times", "10-20 times", "30-40 times", "100-150 times"],
+        correct: 0
+    },
+    {
+        question: "Which animal has the most powerful bite force?",
+        answers: ["Saltwater Crocodile", "Great White Shark", "Hippopotamus", "Nile Crocodile"],
+        correct: 0
+    },
+    {
+        question: "How many chambers does a cow's stomach have?",
+        answers: ["Four", "Two", "Three", "Five"],
+        correct: 0
+    },
+    {
+        question: "What is the gestation period of an African elephant?",
+        answers: ["22 months", "12 months", "18 months", "28 months"],
+        correct: 0
+    },
+    {
+        question: "Which bird has the largest wingspan?",
+        answers: ["Wandering Albatross", "Andean Condor", "California Condor", "Bald Eagle"],
+        correct: 0
+    },
+    {
+        question: "How fast can a peregrine falcon dive?",
+        answers: ["240 mph", "150 mph", "200 mph", "300 mph"],
+        correct: 0
+    },
+    {
+        question: "What color is a polar bear's skin?",
+        answers: ["Black", "White", "Pink", "Gray"],
+        correct: 0
+    },
+    {
+        question: "How many neurons does an octopus have approximately?",
+        answers: ["500 million", "100 million", "300 million", "1 billion"],
+        correct: 0
+    },
+    {
+        question: "What is the only continent without native reptiles?",
+        answers: ["Antarctica", "Europe", "Australia", "North America"],
+        correct: 0
+    },
+    {
+        question: "How long can a Galapagos tortoise live?",
+        answers: ["Over 175 years", "50 years", "100 years", "150 years"],
+        correct: 0
+    },
+    {
+        question: "What is the only bird that can fly backwards?",
+        answers: ["Hummingbird", "Eagle", "Sparrow", "Parrot"],
+        correct: 0
+    },
+    {
+        question: "How many bones does a shark have?",
+        answers: ["Zero (cartilage)", "50", "100", "200"],
+        correct: 0
+    },
+    {
+        question: "What percentage of a jellyfish is water?",
+        answers: ["95%", "50%", "75%", "100%"],
+        correct: 0
+    },
+    {
+        question: "How many eyes does a bee have?",
+        answers: ["Five", "Two", "Four", "Six"],
+        correct: 0
+    },
+    {
+        question: "What is the fastest marine animal?",
+        answers: ["Sailfish", "Dolphin", "Shark", "Tuna"],
+        correct: 0
+    },
+    {
+        question: "How long can a snail sleep?",
+        answers: ["Up to 3 years", "1 month", "1 year", "6 months"],
+        correct: 0
+    },
+    {
+        question: "Which animal has the largest brain?",
+        answers: ["Sperm Whale", "Elephant", "Human", "Dolphin"],
+        correct: 0
+    },
+    {
+        question: "How many teeth does a mosquito have?",
+        answers: ["47", "0", "10", "25"],
+        correct: 0
+    },
+    {
+        question: "What is the lifespan of a dragonfly?",
+        answers: ["6 months", "1 year", "2 weeks", "1 month"],
+        correct: 0
+    },
+    {
+        question: "How many hearts does a worm have?",
+        answers: ["5", "1", "2", "3"],
+        correct: 0
+    },
+    {
+        question: "What temperature do Arctic foxes survive?",
+        answers: ["-70°C (-94°F)", "-20°C (-4°F)", "-40°C (-40°F)", "-50°C (-58°F)"],
+        correct: 0
+    },
+    {
+        question: "How far can an owl turn its head?",
+        answers: ["270 degrees", "180 degrees", "360 degrees", "90 degrees"],
+        correct: 0
+    },
+    {
+        question: "What is the smallest bird in the world?",
+        answers: ["Bee Hummingbird", "Sparrow", "Finch", "Wren"],
+        correct: 0
+    },
+    {
+        question: "How many species of ants exist worldwide?",
+        answers: ["12,000+", "1,000", "5,000", "20,000"],
+        correct: 0
+    },
+    {
+        question: "What is the only mammal that lays eggs?",
+        answers: ["Platypus", "Echidna", "Both A and B", "Kangaroo"],
+        correct: 2
+    },
+    {
+        question: "How loud can a lion's roar be heard?",
+        answers: ["5 miles away", "1 mile away", "2 miles away", "10 miles away"],
+        correct: 0
+    },
+    {
+        question: "How many stomachs does a dolphin have?",
+        answers: ["Two", "One", "Three", "Four"],
+        correct: 0
+    },
+    {
+        question: "What is the lifespan of a mayfly?",
+        answers: ["24 hours", "1 week", "1 month", "3 days"],
+        correct: 0
     }
 ];
 
 // Initialize game
 function initGame() {
-    renderHippoSelection();
     setupEventListeners();
+}
+
+// Setup player count selection
+function setupPlayerCountSelection() {
+    document.querySelectorAll('.player-count-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            gameState.numPlayers = parseInt(e.target.dataset.players);
+            gameState.currentSelectionPlayer = 1;
+            gameState.takenHippos = [];
+            gameState.players = [];
+
+            // Switch to hippo selection
+            document.getElementById('player-count-screen').classList.remove('active');
+            document.getElementById('selection-screen').classList.add('active');
+
+            renderHippoSelection();
+        });
+    });
 }
 
 // Render hippo selection screen
@@ -225,10 +461,22 @@ function renderHippoSelection() {
     const container = document.getElementById('hippo-selection');
     container.innerHTML = '';
 
+    // Update title
+    document.getElementById('selection-title').textContent =
+        `Player ${gameState.currentSelectionPlayer}: Choose Your Hippo!`;
+
     hippoData.forEach(hippo => {
         const card = document.createElement('div');
         card.className = 'hippo-card';
+        const isTaken = gameState.takenHippos.includes(hippo.id);
+
+        if (isTaken) {
+            card.classList.add('taken');
+        }
+
         card.dataset.hippoId = hippo.id;
+
+        const takenLabel = isTaken ? '<div style="color: #f44336; font-weight: bold; margin-top: 10px;">TAKEN</div>' : '';
 
         card.innerHTML = `
             <div class="hippo-icon" style="color: ${hippo.color}">${hippo.icon}</div>
@@ -254,41 +502,81 @@ function renderHippoSelection() {
                     </div>
                 </div>
             </div>
+            ${takenLabel}
         `;
 
-        card.addEventListener('click', () => selectHippo(hippo.id));
+        if (!isTaken) {
+            card.addEventListener('click', () => selectHippo(hippo.id));
+        }
         container.appendChild(card);
     });
 }
 
 // Select a hippo
 function selectHippo(hippoId) {
-    gameState.selectedHippo = hippoData.find(h => h.id === hippoId);
+    if (gameState.takenHippos.includes(hippoId)) return;
+
+    const hippo = hippoData.find(h => h.id === hippoId);
 
     // Update UI
     document.querySelectorAll('.hippo-card').forEach(card => {
         card.classList.remove('selected');
-        if (card.dataset.hippoId == hippoId) {
+        if (card.dataset.hippoId == hippoId && !card.classList.contains('taken')) {
             card.classList.add('selected');
         }
     });
 
-    document.getElementById('start-race-btn').disabled = false;
+    // Store temporarily
+    gameState.tempSelectedHippo = hippo;
+    document.getElementById('confirm-hippo-btn').disabled = false;
+}
+
+// Confirm hippo selection for current player
+function confirmHippoSelection() {
+    if (!gameState.tempSelectedHippo) return;
+
+    // Add player
+    gameState.players.push({
+        playerNumber: gameState.currentSelectionPlayer,
+        hippoId: gameState.tempSelectedHippo.id,
+        name: gameState.tempSelectedHippo.name
+    });
+
+    gameState.takenHippos.push(gameState.tempSelectedHippo.id);
+    gameState.currentSelectionPlayer++;
+
+    // Check if all players have selected
+    if (gameState.currentSelectionPlayer > gameState.numPlayers) {
+        // All players selected, start race
+        startRace();
+    } else {
+        // Next player selects
+        gameState.tempSelectedHippo = null;
+        document.getElementById('confirm-hippo-btn').disabled = true;
+        renderHippoSelection();
+    }
 }
 
 // Start the race
 function startRace() {
     // Initialize race state
     gameState.currentTurn = 1;
-    gameState.usedQuestions = [];
+    gameState.currentPlayerIndex = 0;
+    gameState.playerAnswers = [];
+    gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
-    gameState.correctStreak = 0;
     gameState.isHardQuestion = false;
-    gameState.hippos = hippoData.map(hippo => ({
-        ...hippo,
-        position: 0,
-        isPlayer: hippo.id === gameState.selectedHippo.id
-    }));
+
+    // Create hippos - players + AI
+    gameState.hippos = hippoData.map(hippo => {
+        const player = gameState.players.find(p => p.hippoId === hippo.id);
+        return {
+            ...hippo,
+            position: 0,
+            isPlayer: !!player,
+            playerNumber: player ? player.playerNumber : null
+        };
+    });
 
     // Switch to race screen
     document.getElementById('selection-screen').classList.remove('active');
@@ -312,10 +600,12 @@ function renderRaceTrack() {
         lane.className = 'race-lane';
         lane.id = `lane-${hippo.id}`;
 
+        const playerLabel = hippo.isPlayer ? ` (P${hippo.playerNumber})` : ' (AI)';
+
         lane.innerHTML = `
             <div class="lane-background" style="width: 0%"></div>
             <div class="hippo-racer" style="color: ${hippo.color}">${hippo.icon}</div>
-            <div class="hippo-label">${hippo.name}${hippo.isPlayer ? ' (You)' : ''}</div>
+            <div class="hippo-label">${hippo.name}${playerLabel}</div>
             <div class="finish-line"></div>
         `;
 
@@ -326,57 +616,83 @@ function renderRaceTrack() {
 // Update player info
 function updatePlayerInfo() {
     document.querySelector('#turn-counter span').textContent = gameState.currentTurn;
+    const difficulty = gameState.isHardQuestion ? ' | <span style="color: #ff9800; font-weight: bold;">HARD</span>' : ' | <span style="color: #4caf50; font-weight: bold;">EASY</span>';
 
-    const streakDisplay = gameState.correctStreak > 0
-        ? ` | Streak: <span style="color: #ff9800; font-weight: bold;">${gameState.correctStreak} 🔥</span>`
-        : '';
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer) {
+        const currentHippo = hippoData.find(h => h.hippoId === currentPlayer.hippoId);
+        document.getElementById('current-player-info').innerHTML = `
+            Player ${currentPlayer.playerNumber}'s Turn: <span style="color: ${hippoData.find(h => h.id === currentPlayer.hippoId).color}">${currentPlayer.name}</span>
+        `;
+    }
 
-    document.getElementById('player-info').innerHTML = `
-        Playing as: <strong>${gameState.selectedHippo.name}</strong>${streakDisplay}
-    `;
+    document.getElementById('player-info').innerHTML = `${difficulty}`;
+}
+
+// Shuffle array helper function
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 // Show next question
 function showNextQuestion() {
-    // Check if we should show a hard question (2 correct in a row)
-    const isHardQuestion = gameState.correctStreak >= 2;
+    // Alternate between easy and hard questions (turn 1 = easy, turn 2 = hard, etc.)
+    const isHardQuestion = gameState.currentTurn % 2 === 0;
     gameState.isHardQuestion = isHardQuestion;
 
-    let question;
+    let question, questionPool, usedList;
 
     if (isHardQuestion) {
-        // Get unused hard question
-        const availableQuestions = hardTriviaQuestions.filter((_, index) =>
-            !gameState.usedHardQuestions.includes(index)
-        );
-
-        if (availableQuestions.length === 0) {
-            gameState.usedHardQuestions = [];
-        }
-
-        const questionIndex = Math.floor(Math.random() * (availableQuestions.length || hardTriviaQuestions.length));
-        const actualIndex = hardTriviaQuestions.indexOf(availableQuestions[questionIndex] || hardTriviaQuestions[questionIndex]);
-        gameState.currentQuestionIndex = actualIndex;
-        gameState.usedHardQuestions.push(actualIndex);
-
-        question = hardTriviaQuestions[actualIndex];
+        questionPool = hardQuestions;
+        usedList = gameState.usedHardQuestions;
     } else {
-        // Get unused normal question
-        const availableQuestions = triviaQuestions.filter((_, index) =>
-            !gameState.usedQuestions.includes(index)
-        );
-
-        if (availableQuestions.length === 0) {
-            gameState.usedQuestions = [];
-        }
-
-        const questionIndex = Math.floor(Math.random() * availableQuestions.length);
-        const actualIndex = triviaQuestions.indexOf(availableQuestions[questionIndex]);
-        gameState.currentQuestionIndex = actualIndex;
-        gameState.usedQuestions.push(actualIndex);
-
-        question = triviaQuestions[actualIndex];
+        questionPool = easyQuestions;
+        usedList = gameState.usedEasyQuestions;
     }
+
+    // Get unused question
+    const availableQuestions = questionPool.filter((_, index) => !usedList.includes(index));
+
+    if (availableQuestions.length === 0) {
+        // Reset used questions if all have been used
+        if (isHardQuestion) {
+            gameState.usedHardQuestions = [];
+        } else {
+            gameState.usedEasyQuestions = [];
+        }
+    }
+
+    const questionIndex = Math.floor(Math.random() * (availableQuestions.length || questionPool.length));
+    const actualIndex = questionPool.indexOf(availableQuestions[questionIndex] || questionPool[questionIndex]);
+    gameState.currentQuestionIndex = actualIndex;
+
+    if (isHardQuestion) {
+        gameState.usedHardQuestions.push(actualIndex);
+    } else {
+        gameState.usedEasyQuestions.push(actualIndex);
+    }
+
+    question = questionPool[actualIndex];
+
+    // Create shuffled answers with tracking
+    const answersWithIndex = question.answers.map((answer, index) => ({
+        text: answer,
+        originalIndex: index
+    }));
+    const shuffledAnswers = shuffleArray(answersWithIndex);
+
+    // Find the new position of the correct answer
+    const correctAnswerPosition = shuffledAnswers.findIndex(
+        item => item.originalIndex === question.correct
+    );
+
+    // Store for answer checking
+    gameState.currentCorrectAnswer = correctAnswerPosition;
 
     // Render question with hard indicator if applicable
     const questionContainer = document.getElementById('question-container');
@@ -397,28 +713,37 @@ function showNextQuestion() {
     const answersContainer = document.getElementById('answers-container');
     answersContainer.innerHTML = '';
 
-    question.answers.forEach((answer, index) => {
+    shuffledAnswers.forEach((answerObj, index) => {
         const btn = document.createElement('button');
         btn.className = 'answer-btn';
         if (isHardQuestion) {
             btn.classList.add('hard-mode');
         }
-        btn.textContent = answer;
+        btn.textContent = answerObj.text;
         btn.addEventListener('click', () => handleAnswer(index));
         answersContainer.appendChild(btn);
     });
+
+    // Update player info to show difficulty
+    updatePlayerInfo();
 }
 
 // Handle answer
 function handleAnswer(selectedIndex) {
-    const questionArray = gameState.isHardQuestion ? hardTriviaQuestions : triviaQuestions;
-    const question = questionArray[gameState.currentQuestionIndex];
-    const isCorrect = selectedIndex === question.correct;
+    const isCorrect = selectedIndex === gameState.currentCorrectAnswer;
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    // Store answer for this player
+    gameState.playerAnswers.push({
+        playerNumber: currentPlayer.playerNumber,
+        hippoId: currentPlayer.hippoId,
+        isCorrect: isCorrect
+    });
 
     // Disable all buttons
     document.querySelectorAll('.answer-btn').forEach((btn, index) => {
         btn.disabled = true;
-        if (index === question.correct) {
+        if (index === gameState.currentCorrectAnswer) {
             btn.classList.add('correct');
         } else if (index === selectedIndex && !isCorrect) {
             btn.classList.add('incorrect');
@@ -429,39 +754,60 @@ function handleAnswer(selectedIndex) {
     const feedback = document.getElementById('feedback');
     if (isCorrect) {
         if (gameState.isHardQuestion) {
-            feedback.textContent = '✓ AMAZING! Hard question correct! MEGA BOOST!';
+            feedback.textContent = `✓ Player ${currentPlayer.playerNumber} - AMAZING! Hard question correct! MEGA BOOST!`;
             feedback.className = 'correct hard';
         } else {
-            feedback.textContent = '✓ Correct! Your hippo gets a speed boost!';
+            feedback.textContent = `✓ Player ${currentPlayer.playerNumber} - Correct! Your hippo gets a speed boost!`;
             feedback.className = 'correct';
         }
-        // Increment streak (will be reset after hard question in processTurn)
-        if (!gameState.isHardQuestion) {
-            gameState.correctStreak++;
-        }
     } else {
-        feedback.textContent = '✗ Wrong answer. Your hippo moves normally.';
+        feedback.textContent = `✗ Player ${currentPlayer.playerNumber} - Wrong answer. Your hippo moves normally.`;
         feedback.className = 'incorrect';
-        // Reset streak on wrong answer
-        gameState.correctStreak = 0;
     }
 
-    // Process turn after short delay
-    setTimeout(() => {
-        processTurn(isCorrect);
-    }, 1500);
+    // Check if all players have answered
+    gameState.currentPlayerIndex++;
+
+    if (gameState.currentPlayerIndex >= gameState.numPlayers) {
+        // All players answered, process turn
+        setTimeout(() => {
+            processTurn();
+        }, 1500);
+    } else {
+        // Next player's turn
+        setTimeout(() => {
+            showSameQuestionForNextPlayer();
+        }, 1500);
+    }
+}
+
+// Show same question for next player
+function showSameQuestionForNextPlayer() {
+    // Re-enable buttons and clear feedback
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').className = '';
+
+    document.querySelectorAll('.answer-btn').forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('correct', 'incorrect');
+    });
+
+    // Update player info
+    updatePlayerInfo();
 }
 
 // Process turn
-function processTurn(playerAnsweredCorrect) {
+function processTurn() {
     // Move all hippos
     gameState.hippos.forEach(hippo => {
         let movement;
 
         if (hippo.isPlayer) {
-            // Player movement
+            // Find this player's answer
+            const playerAnswer = gameState.playerAnswers.find(a => a.hippoId === hippo.id);
             movement = hippo.baseSpeed;
-            if (playerAnsweredCorrect) {
+
+            if (playerAnswer && playerAnswer.isCorrect) {
                 let bonusMultiplier = hippo.bonus;
 
                 // Apply 1.5x multiplier for hard questions
@@ -473,16 +819,20 @@ function processTurn(playerAnsweredCorrect) {
             }
         } else {
             // AI movement (random with some variance)
-            movement = hippo.baseSpeed + Math.random() * 5;
+            const aiCorrect = Math.random() > 0.5; // 50% chance AI answers correctly
+            movement = hippo.baseSpeed;
+
+            if (aiCorrect) {
+                let bonusMultiplier = hippo.bonus;
+                if (gameState.isHardQuestion) {
+                    bonusMultiplier *= 1.5;
+                }
+                movement += hippo.baseSpeed * bonusMultiplier;
+            }
         }
 
         hippo.position = Math.min(hippo.position + movement, gameState.raceDistance);
     });
-
-    // Reset streak after hard question (whether correct or wrong)
-    if (gameState.isHardQuestion) {
-        gameState.correctStreak = 0;
-    }
 
     // Update visuals
     updateRacePositions();
@@ -493,9 +843,10 @@ function processTurn(playerAnsweredCorrect) {
     if (winner) {
         setTimeout(() => endRace(winner), 1000);
     } else {
-        // Continue race
+        // Continue race - reset for next turn
         gameState.currentTurn++;
-        updatePlayerInfo();
+        gameState.currentPlayerIndex = 0;
+        gameState.playerAnswers = [];
         setTimeout(() => showNextQuestion(), 2000);
     }
 }
@@ -528,10 +879,10 @@ function endRace(winner) {
     // Show results
     const endTitle = document.getElementById('end-title');
     if (winner.isPlayer) {
-        endTitle.textContent = '🏆 You Won! 🏆';
+        endTitle.textContent = `🏆 Player ${winner.playerNumber} (${winner.name}) Won! 🏆`;
         endTitle.style.color = '#4caf50';
     } else {
-        endTitle.textContent = `${winner.name} Won!`;
+        endTitle.textContent = `${winner.name} (AI) Won!`;
         endTitle.style.color = '#f44336';
     }
 
@@ -541,10 +892,11 @@ function endRace(winner) {
     rankings.forEach((hippo, index) => {
         const resultItem = document.createElement('div');
         resultItem.className = 'result-item';
+        const label = hippo.isPlayer ? ` (P${hippo.playerNumber})` : ' (AI)';
         resultItem.innerHTML = `
             <span class="result-position">#${index + 1}</span>
             <span class="result-hippo" style="color: ${hippo.color}">
-                ${hippo.icon} ${hippo.name}${hippo.isPlayer ? ' (You)' : ''}
+                ${hippo.icon} ${hippo.name}${label}
             </span>
             <span>${hippo.position.toFixed(1)} / ${gameState.raceDistance}</span>
         `;
@@ -554,24 +906,26 @@ function endRace(winner) {
 
 // Setup event listeners
 function setupEventListeners() {
-    document.getElementById('start-race-btn').addEventListener('click', startRace);
+    setupPlayerCountSelection();
+    document.getElementById('confirm-hippo-btn').addEventListener('click', confirmHippoSelection);
     document.getElementById('play-again-btn').addEventListener('click', resetGame);
 }
 
 // Reset game
 function resetGame() {
-    gameState.selectedHippo = null;
+    gameState.numPlayers = 1;
+    gameState.players = [];
+    gameState.currentPlayerIndex = 0;
+    gameState.playerAnswers = [];
     gameState.currentTurn = 1;
-    gameState.usedQuestions = [];
+    gameState.usedEasyQuestions = [];
     gameState.usedHardQuestions = [];
-    gameState.correctStreak = 0;
     gameState.isHardQuestion = false;
+    gameState.currentSelectionPlayer = 1;
+    gameState.takenHippos = [];
 
     document.getElementById('end-screen').classList.remove('active');
-    document.getElementById('selection-screen').classList.add('active');
-    document.getElementById('start-race-btn').disabled = true;
-
-    renderHippoSelection();
+    document.getElementById('player-count-screen').classList.add('active');
 }
 
 // Start the game when page loads

@@ -4,19 +4,21 @@ A fun, interactive web-based racing game where you choose a hippo and race again
 
 ## How to Play
 
-1. **Choose Your Hippo**: Select from 4 unique hippos, each with different stats:
+1. **Select Number of Players**: Choose 1-3 human players. Remaining hippos will be AI-controlled.
+
+2. **Choose Your Hippo**: Each player selects from 4 unique hippos in turn order:
    - **Thunder**: Fast and steady (High speed, moderate bonus)
    - **Lightning**: High risk, high reward (Lower speed, highest bonus multiplier)
    - **Splash**: Consistent performer (Highest speed, lowest bonus)
    - **Bubbles**: Balanced all-arounder (Balanced stats)
 
-2. **Answer Trivia Questions**: Each turn, you'll be asked an animal-themed trivia question with multiple choice answers.
-
-3. **Build Your Streak**:
-   - Answer 2 questions correctly in a row to unlock a HARD QUESTION!
-   - Hard questions are more challenging but reward 1.5x bonus multiplier
-   - Your current streak is displayed with a fire emoji 🔥
-   - Streak resets after a hard question or wrong answer
+3. **Answer Trivia Questions**:
+   - Same question shown to all players
+   - Players answer **sequentially** (Player 1, then Player 2, then Player 3)
+   - Questions alternate between EASY and HARD difficulty:
+     - **Turn 1, 3, 5...** = EASY questions (Ages 6-9)
+     - **Turn 2, 4, 6...** = HARD questions (Ages 10-13)
+   - Answer choices are randomized each time
 
 4. **Race to the Finish**:
    - All hippos move forward each turn
@@ -24,17 +26,23 @@ A fun, interactive web-based racing game where you choose a hippo and race again
    - Wrong answers mean your hippo moves at base speed only
    - AI opponents move at their base speed with slight random variance
 
+   - After all players have answered, **ALL hippos move simultaneously** (humans + AI)
+   - Each hippo moves based on whether their player answered correctly
+
 5. **Win the Race**: First hippo to reach the finish line wins!
 
 ## Game Features
 
+- **Multiplayer Support**: 1-3 human players can play together on the same device
+- **Turn-Based Gameplay**: Players answer the same question sequentially
 - **4 Unique Hippos**: Each with distinct stats (Speed, Acceleration, Bonus Multiplier)
-- **15 Normal Trivia Questions**: Animal-themed multiple choice questions
-- **12 Hard Trivia Questions**: Challenging questions that unlock after 2-correct streaks
-- **Streak System**: Build momentum with consecutive correct answers
+- **40+ Easy Questions**: Kid-friendly animal questions for ages 6-9
+- **30+ Hard Questions**: Challenging animal trivia for ages 10-13
+- **Alternating Difficulty**: Questions automatically alternate between easy and hard
+- **Randomized Answers**: Answer choices are shuffled every time
 - **Bonus Multiplier System**: Hard questions award 1.5x bonus on top of your hippo's bonus
+- **Smart AI**: AI-controlled hippos compete fairly (50% accuracy)
 - **Dynamic Racing**: Visual race track with real-time position updates
-- **AI Opponents**: Compete against 3 AI-controlled hippos
 - **Beautiful UI**: Smooth animations, pulsing effects, and responsive design
 
 ## Installation & Setup
@@ -53,11 +61,17 @@ A fun, interactive web-based racing game where you choose a hippo and race again
 ## Strategy Tips
 
 - **Speed vs Bonus**: Higher base speed means consistent progress, higher bonus multiplier means bigger rewards for correct answers
-- **Know Your Trivia**: The questions cover various animal facts - from basic to challenging
-- **Choose Wisely**: Pick a hippo that matches your trivia knowledge confidence level
-- **Build Streaks**: Try to answer 2 questions correctly to unlock hard questions
-- **Risk vs Reward**: Hard questions give 1.5x bonus but are more challenging - perfect for hippos with high bonus multipliers like Lightning!
-- **Streak Strategy**: If you have a streak going and aren't confident, remember that wrong answers reset your streak
+- **Know Your Trivia**: Easy questions are kid-friendly (ages 6-9), hard questions are more challenging (ages 10-13)
+- **Choose Wisely**:
+  - Pick **Lightning** or **Bubbles** if you're confident with hard questions (high bonus multipliers)
+  - Pick **Splash** for consistent speed regardless of trivia knowledge
+  - **Thunder** is a balanced option for mixed performance
+- **Hard Question Rewards**: Every other question is hard and awards 1.5x bonus - perfect for hippos with high bonus multipliers!
+- **Randomized Answers**: Pay attention! Answer order changes each time, so you can't memorize positions
+- **Multiplayer Strategy**:
+  - In a 3-player game, coordinate who picks which hippo
+  - Watch other players' answers to learn from their choices
+  - Remember: everyone sees the same question, so work together or compete!
 
 ## Browser Compatibility
 
